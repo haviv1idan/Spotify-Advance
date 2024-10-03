@@ -3,3 +3,4 @@ spotipy==2.24.0
 ipython==8.27.0
 ipykernel==6.29.5
 autopep8==2.3.1
+pre-commit==3.8.0
