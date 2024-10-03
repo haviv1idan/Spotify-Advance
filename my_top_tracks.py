@@ -20,8 +20,6 @@ CLIENT_ID: Final[str] = client_data.get('client_id')
 CLIENT_SECRET: Final[str] = client_data.get('client_secret')
 REDIRECT_URI: Final[str] = client_data.get('redirect_uri')
 
-logger.info(f'read_client_data is: \n{CLIENT_ID= }\n{CLIENT_SECRET=}\n{REDIRECT_URI=}')    
-
 sp = Spotify(auth_manager=SpotifyOAuth(
     client_id=CLIENT_ID, 
     client_secret=CLIENT_SECRET,
