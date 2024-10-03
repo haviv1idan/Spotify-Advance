@@ -9,6 +9,7 @@ def read_client_data() -> dict[str, str]:
         data = yaml.safe_load(f)
         return data
 
+
 client_data: dict[str, str] = read_client_data()
 CLIENT_ID: Final[str] = client_data.get('client_id')
 CLIENT_SECRET: Final[str] = client_data.get('client_secret')
