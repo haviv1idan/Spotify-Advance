@@ -1,6 +1,7 @@
-import yaml
-import spotipy
 from typing import Final
+
+import spotipy
+import yaml
 from spotipy.oauth2 import SpotifyOAuth
 
 

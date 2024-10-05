@@ -1,9 +1,9 @@
 import logging
-
-from yaml import safe_load
 from typing import Final
+
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
+from yaml import safe_load
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, filename="logs/top_artists.log", filemode="w")
