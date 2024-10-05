@@ -30,12 +30,12 @@ sp = Spotify(
 )
 
 
-for sp_range in ['short_term', 'medium_term', 'long_term']:
+for sp_range in ["short_term", "medium_term", "long_term"]:
     logger.info(f"Range: {sp_range}")
 
     results = sp.current_user_top_artists(time_range=sp_range, limit=10)
 
-    for i, item in enumerate(results['items']):
+    for i, item in enumerate(results["items"]):
         logger.info(f"{i}, {item['name']}")
 
     logger.info("\n")
