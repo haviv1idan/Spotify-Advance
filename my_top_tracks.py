@@ -33,7 +33,7 @@ sp = Spotify(
 
 # get the user's username
 username = sp.me()["id"]
-logger.info(f"{username= }")
+logger.info(f"{username=}")
 
 ranges_items = {"short_term": [], "medium_term": [], "long_term": []}
 
