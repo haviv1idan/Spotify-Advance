@@ -1,14 +1,14 @@
-from typing import Final
-from flask import Flask
-from src.utils import read_client_data, user
+from flask import Flask, redirect, url_for
+
+from src.utils import clear_func_cache, current_user_data
 
 app = Flask(__name__)
 
-@app.route('/')
+
+@app.route("/")
 def hello_world():
-    user_data: dict = user().me()
-    profile_data = \
-    f"""
+    user_data = current_user_data()
+    profile_data = f"""
     <h1>Display your Spotify profile data</h1>
 
     <section id="profile">
@@ -16,8 +16,14 @@ def hello_world():
     <ul>
         <li>User ID: <span id="id">{user_data['id']}</span></li>
         <li>Spotify URI: <a id="uri" href="#">{user_data['uri']}</a></li>
+        <li>Spotify URI: <a id="email" href="#">{user_data['email']}</a></li>
     </ul>
-    </section>    
+    </section>
     """
     return profile_data
 
+
+@app.route("/clear_cache")
+def clear_cache():
+    clear_func_cache()
+    return redirect(url_for("hello_world"))
