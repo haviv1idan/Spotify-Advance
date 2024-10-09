@@ -1,4 +1,5 @@
 import logging
+from enum import Enum
 from functools import lru_cache
 from typing import Final
 
@@ -10,6 +11,12 @@ logging.getLogger("spotipy").setLevel(logging.DEBUG)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
+
+
+class TermEnum(Enum):
+    SHORT = "short_term"
+    MEDIUM = "medium_term"
+    LONG = "long_term"
 
 
 def clear_func_cache(functions: list[str] | str = None) -> None:
@@ -76,3 +83,23 @@ def current_user_data() -> dict:
     :return dict: current user data
     """
     return user().me()
+
+
+@lru_cache(maxsize=1)
+def current_user_top_artists(
+    term: str = TermEnum.SHORT.value, count: int = 20
+) -> list[str]:
+    """
+    returns the top artists of current user in given term of time and count of artists to display
+
+    Link to API call:
+    https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
+
+    :param TermEnum term: Enum of time terms, default is short_term
+    :param int count: number of artists to display, default is 20 as api default limit
+    :return list[str]: list of artists
+    """
+    top_artists: dict = user().current_user_top_artists(limit=count, time_range=term)
+    top_artists = top_artists["items"]
+
+    return list(map(lambda artist: artist["name"], top_artists))
