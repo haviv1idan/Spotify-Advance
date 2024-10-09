@@ -1,8 +1,9 @@
+from functools import lru_cache
 from typing import Final
-from yaml import safe_load
+
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
-from functools import lru_cache
+from yaml import safe_load
 
 
 def read_client_data() -> dict[str, str]:
