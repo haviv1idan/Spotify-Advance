@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, url_for
 
 from src.utils import (TermEnum, clear_func_cache, current_user_data,
-                       current_user_top_artists)
+                       print_func_cache, user_top_artists)
 
 app = Flask(__name__)
 
@@ -27,11 +27,17 @@ def hello_world():
 @app.route("/top_artists")
 def top_artists():
     top_artists_per_term = {
-        term.value: current_user_top_artists(term=term.value, count=5)
+        term.value: user_top_artists(term=term.value, count=5)
         for term in TermEnum
     }
 
     return render_template("top_artists.html", top_artists=top_artists_per_term)
+
+
+@app.route("/get_cache")
+def get_cache():
+    print_func_cache()
+    return redirect(url_for("hello_world"))
 
 
 @app.route("/clear_cache")

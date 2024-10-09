@@ -10,13 +10,28 @@ from yaml import safe_load
 logging.getLogger("spotipy").setLevel(logging.DEBUG)
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename='flask_utils.log', filemode='w', level=logging.DEBUG)
 
 
 class TermEnum(Enum):
     SHORT = "short_term"
     MEDIUM = "medium_term"
     LONG = "long_term"
+
+
+def print_func_cache(functions: list[str] | str = None) -> None:
+    if not functions:
+        functions = ["user", "current_user_data", "user_top_artists"]
+    elif isinstance(functions, str):
+        functions = [functions]
+
+    logger.info(f"{functions=}")
+    for func in functions:
+        _func = globals().get(func, None)
+        if not _func:
+            continue
+
+        logger.info(f"cache info of {func}: {_func.cache_info()}")
 
 
 def clear_func_cache(functions: list[str] | str = None) -> None:
@@ -26,7 +41,7 @@ def clear_func_cache(functions: list[str] | str = None) -> None:
     :return None
     """
     if not functions:
-        functions = ["user", "current_user_data"]
+        functions = ["user", "current_user_data", "user_top_artists"]
     elif isinstance(functions, str):
         functions = [functions]
 
@@ -52,7 +67,7 @@ def read_client_data() -> dict[str, str]:
         return data
 
 
-@lru_cache(maxsize=1)
+@lru_cache()
 def user() -> Spotify:
     client_data: dict[str, str] = read_client_data()
     client_id: Final[str] = client_data.get("client_id")
@@ -72,7 +87,7 @@ def user() -> Spotify:
     return sp
 
 
-@lru_cache(maxsize=1)
+@lru_cache()
 def current_user_data() -> dict:
     """
     returns current user profile using api /me
@@ -85,8 +100,8 @@ def current_user_data() -> dict:
     return user().me()
 
 
-@lru_cache(maxsize=1)
-def current_user_top_artists(
+@lru_cache()
+def user_top_artists(
     term: str = TermEnum.SHORT.value, count: int = 20
 ) -> list[str]:
     """
