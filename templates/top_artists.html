@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Artists</title>
+</head>
+<body>
+    <h1>Your Top Artists</h1>
+
+    <h2>Your Top Artists in short term</h2>
+    <ul>
+    {% for artist in top_artists['short_term'] %}
+        <li>{{ artist }}</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Your Top Artists in medium term</h2>
+    <ul>
+    {% for artist in top_artists['medium_term'] %}
+        <li>{{ artist }}</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Your Top Artists in long term</h2>
+    <ul>
+    {% for artist in top_artists['long_term'] %}
+        <li>{{ artist }}</li>
+    {% endfor %}
+    </ul>
+</body>
+</html>
