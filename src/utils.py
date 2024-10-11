@@ -105,7 +105,7 @@ def current_user_data() -> dict:
 
 @lru_cache()
 def user_top_artists(
-    term: str = TermEnum.SHORT.value, count: int = 20
+    term: str = TermEnum.SHORT.value, count: int = 10
 ) -> list[str]:
     """
     returns the top artists of current user in given term of time and count of artists to display
@@ -114,10 +114,30 @@ def user_top_artists(
     https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
 
     :param TermEnum term: Enum of time terms, default is short_term
-    :param int count: number of artists to display, default is 20 as api default limit
+    :param int count: number of artists to display, default is 10 as api default limit
     :return list[str]: list of artists
     """
     top_artists: dict = user().current_user_top_artists(limit=count, time_range=term)
     top_artists = top_artists["items"]
 
-    return list(map(lambda artist: artist["name"], top_artists))
+    return top_artists
+
+
+@lru_cache()
+def user_top_tracks(
+    term: str = TermEnum.SHORT.value, count: int = 10
+) -> list[str]:
+    """
+    returns the top tracks of current user in given term of time and count of tracks to display
+
+    Link to API call:
+    https://developer.spotify.com/documentation/web-api/reference/get-users-top-tracks-and-tracks
+
+    :param TermEnum term: Enum of time terms, default is short_term
+    :param int count: number of tracks to display, default is 10 as api default limit
+    :return list[str]: list of tracks
+    """
+    top_tracks: dict = user().current_user_top_tracks(limit=count, time_range=term)
+    top_tracks = top_tracks["items"]
+
+    return top_tracks
