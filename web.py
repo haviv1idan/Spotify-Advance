@@ -19,6 +19,7 @@ def top_artists():
         for term in TermEnum
     }
 
+    print(f"{top_artists=}")
     return render_template("top_artists.html", top_artists=top_artists_per_term)
 
 

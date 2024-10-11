@@ -19,9 +19,12 @@ class TermEnum(Enum):
     LONG = "long_term"
 
 
+DEFAULT_FUNCTIONS = ("user", "current_user_data", "user_top_artists")
+
+
 def print_func_cache(functions: list[str] | str = None) -> None:
     if not functions:
-        functions = ["user", "current_user_data", "user_top_artists"]
+        functions = DEFAULT_FUNCTIONS
     elif isinstance(functions, str):
         functions = [functions]
 
@@ -41,7 +44,7 @@ def clear_func_cache(functions: list[str] | str = None) -> None:
     :return None
     """
     if not functions:
-        functions = ["user", "current_user_data", "user_top_artists"]
+        functions = DEFAULT_FUNCTIONS
     elif isinstance(functions, str):
         functions = [functions]
 
