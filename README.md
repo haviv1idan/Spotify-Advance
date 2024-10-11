@@ -2,6 +2,18 @@
 some cool stuffs for spotify
 
 ## prerequisites
+### Spotify Client data
+Before starting working we need to get our client data from Spotify to use the API
+- create a new account or log in on https://developers.spotify.com/.
+- Go to the dashboard, create an app and add your new ID and SECRET (ID and SECRET can be found on an app setting) to conf.yml file.
+
+Example of conf.yml file:
+```yaml
+client_id: <CLIENT_ID>
+client_secret: <CLIENT_SECRET>
+redirect_uri: http://localhost:3000
+```
+
 ### Setup venv
 ```bash
 python -m venv venv
