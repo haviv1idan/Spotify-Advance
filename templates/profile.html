@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Artists</title>
+</head>
+<body>
+    <h1>Display your Spotify profile data</h1>
+
+    <section id="profile">
+    <h2>Logged in as <span id="displayName">{{ user_data['display_name'] }}</span></h2>
+    <ul>
+        <li>User ID: <span id="id">{{ user_data['id'] }}</span></li>
+        <li>Spotify URI: <a id="uri" href="#">{{ user_data['uri'] }}</a></li>
+        <li>Spotify Email: <a id="email" href="#">{{ user_data['email'] }}</a></li>
+    </ul>
+    </section>
+</body>
+</html>
