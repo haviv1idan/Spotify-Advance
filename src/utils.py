@@ -1,6 +1,8 @@
 import logging
 from enum import Enum
 from functools import lru_cache
+from json import dump, load
+from os.path import exists
 from typing import Final
 
 from spotipy import Spotify
@@ -143,23 +145,53 @@ def user_top_tracks(
     return top_tracks
 
 
-@lru_cache()
-def user_saved_tracks(count: int = 10) -> list[dict]:
+def init_saved_tracks() -> dict[str, dict]:
+    """
+    Get all current user saved tracks and store them in file
+
+    :return dict[str, dict]: _description_
+    """
+
+    saved_tracks_dict = {}
+    tracks = user().current_user_saved_tracks()
+
+    while tracks:
+        for track in tracks['items']:
+            saved_tracks_dict[track['track']['id']] = track
+
+        tracks = user().next(tracks) if tracks['next'] else None
+
+    with open('saved_tracks.json', 'w') as f:
+        dump(saved_tracks_dict, f)
+
+    return saved_tracks_dict
+
+
+def user_saved_tracks() -> list[dict]:
     """
     returns the saved tracks of current user
 
     Link to API call:
     https://developer.spotify.com/documentation/web-api/reference/get-users-saved-tracks
 
-    :param int count: the limit of tracks per request, defaults to 50
     :return list[dict]: user saved tracks (liked songs)
     """
-    saved_tracks = user().current_user_saved_tracks(limit=count)['items']
+    if not exists('saved_tracks.json'):
+        saved_tracks = init_saved_tracks()
+        return list(saved_tracks.values())
 
-#    while tracks:
-#        for i, item in enumerate(tracks["items"]):
-#            saved_tracks.append(item)
-#
-#        tracks = user().next(tracks) if tracks["next"] else None
+    with open('saved_tracks.json', 'r') as f:
+        saved_tracks: dict = load(f)
 
-    return saved_tracks
+    tracks = user().current_user_saved_tracks()
+
+    while tracks:
+        for track in tracks['items']:
+            if track['track']['id'] in saved_tracks:
+                return list(saved_tracks.values())
+
+            saved_tracks[track['track']['id']] = track
+            with open('saved_tracks.json', 'w') as f:
+                dump(saved_tracks, f)
+
+        tracks = user().next(tracks) if tracks['next'] else None
