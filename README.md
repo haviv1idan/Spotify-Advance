@@ -29,7 +29,7 @@ pip install -r requirements.txt
 You can use the playground.ipynb file to run blocks of code and debugging
 
 ### scripts
-You can use the files with *.py* to run specific api 
+You can use the files with *.py* to run specific api
 
 ## In Development
 adding flask app to view the data
