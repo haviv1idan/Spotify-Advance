@@ -141,3 +141,25 @@ def user_top_tracks(
     top_tracks = top_tracks["items"]
 
     return top_tracks
+
+
+@lru_cache()
+def user_saved_tracks(count: int = 10) -> list[dict]:
+    """
+    returns the saved tracks of current user
+
+    Link to API call:
+    https://developer.spotify.com/documentation/web-api/reference/get-users-saved-tracks
+
+    :param int count: the limit of tracks per request, defaults to 50
+    :return list[dict]: user saved tracks (liked songs)
+    """
+    saved_tracks = user().current_user_saved_tracks(limit=count)['items']
+
+#    while tracks:
+#        for i, item in enumerate(tracks["items"]):
+#            saved_tracks.append(item)
+#
+#        tracks = user().next(tracks) if tracks["next"] else None
+
+    return saved_tracks

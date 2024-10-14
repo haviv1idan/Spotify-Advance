@@ -1,7 +1,8 @@
 from flask import Flask, redirect, render_template, url_for
 
 from src.utils import (TermEnum, clear_func_cache, current_user_data,
-                       print_func_cache, user_top_artists, user_top_tracks)
+                       print_func_cache, user_saved_tracks, user_top_artists,
+                       user_top_tracks)
 
 app = Flask(__name__)
 
@@ -32,6 +33,12 @@ def top_tracks():
 
     app.logger.info(f"{top_tracks=}")
     return render_template("top_tracks.html", top_tracks=top_tracks_per_term)
+
+
+@app.route("/saved_tracks")
+def saved_tracks():
+    saved_tracks = user_saved_tracks()
+    return render_template("saved_tracks.html", saved_tracks=saved_tracks)
 
 
 @app.route("/get_cache")
