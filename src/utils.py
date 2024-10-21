@@ -119,10 +119,7 @@ def user_top_artists(
     :param int count: number of artists to display, default is 10 as api default limit
     :return list[str]: list of artists
     """
-    top_artists: dict = user().current_user_top_artists(limit=count, time_range=term)
-    top_artists = top_artists["items"]
-
-    return top_artists
+    return user().current_user_top_artists(limit=count, time_range=term)["items"]
 
 
 @lru_cache()
@@ -139,17 +136,14 @@ def user_top_tracks(
     :param int count: number of tracks to display, default is 10 as api default limit
     :return list[str]: list of tracks
     """
-    top_tracks: dict = user().current_user_top_tracks(limit=count, time_range=term)
-    top_tracks = top_tracks["items"]
-
-    return top_tracks
+    return user().current_user_top_tracks(limit=count, time_range=term)["items"]
 
 
 def init_saved_tracks() -> dict[str, dict]:
     """
     Get all current user saved tracks and store them in file
 
-    :return dict[str, dict]: _description_
+    :return dict[str, dict]: dict of track id and track information
     """
 
     saved_tracks_dict = {}
@@ -176,22 +170,31 @@ def user_saved_tracks() -> list[dict]:
 
     :return list[dict]: user saved tracks (liked songs)
     """
+
+    # if saved_track.json file isn't exists, will get all user saved tracks
     if not exists('saved_tracks.json'):
         saved_tracks = init_saved_tracks()
         return list(saved_tracks.values())
 
+    # read all saved tracks
     with open('saved_tracks.json', 'r') as f:
         saved_tracks: dict = load(f)
 
+    # get last added saved tracks
     tracks = user().current_user_saved_tracks()
 
+    # iterate on last added track and add to saved track the new track.
     while tracks:
+
         for track in tracks['items']:
+            # if we reach a track we've exist in saved track, stop and return the updated saved tracks
             if track['track']['id'] in saved_tracks:
                 return list(saved_tracks.values())
 
+            # in case of track isn't in our saved track, will create a new track and add him to saved tracks.
             saved_tracks[track['track']['id']] = track
             with open('saved_tracks.json', 'w') as f:
                 dump(saved_tracks, f)
 
+        # continue to next tracks block or we reach the end.
         tracks = user().next(tracks) if tracks['next'] else None
