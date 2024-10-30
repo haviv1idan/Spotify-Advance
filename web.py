@@ -1,8 +1,8 @@
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, redirect, render_template, request, url_for
 
 from src.utils import (TermEnum, clear_func_cache, current_user_data,
-                       print_func_cache, user_saved_tracks, user_top_artists,
-                       user_top_tracks)
+                       print_func_cache, user_recommendations,
+                       user_saved_tracks, user_top_artists, user_top_tracks)
 
 app = Flask(__name__)
 
@@ -42,8 +42,30 @@ def top_tracks():
 def saved_tracks():
     app.logger.debug('saved_tracks func called')
     saved_tracks = user_saved_tracks()
-    app.logger.info(f"{top_tracks=}")
+    app.logger.info(f"{saved_tracks=}")
     return render_template("saved_tracks.html", saved_tracks=saved_tracks)
+
+
+@app.route('/recommend_playlist', methods=['GET', 'POST'])
+def recommend_playlist():
+    if request.method == 'POST':
+
+        # Get the selected artist IDs from the form
+        selected_artists = request.form.getlist('artists')
+
+        # Ensure exactly five artists are selected
+        if len(selected_artists) != 5:
+            return render_template(
+                'recommend_playlist.html',
+                top_artists=top_artists,
+                error="Please select exactly 5 artists.")
+
+        # Pass recommended tracks to the template
+        recommended_tracks = user_recommendations(artists=selected_artists)
+        return render_template('recommend_results.html', recommended_tracks=recommended_tracks)
+
+    # Retrieve top artists
+    return render_template('recommend_playlist.html', top_artists=user_top_artists())
 
 
 @app.route("/get_cache")

@@ -198,3 +198,17 @@ def user_saved_tracks() -> list[dict]:
 
         # continue to next tracks block or we reach the end.
         tracks = user().next(tracks) if tracks['next'] else None
+
+
+def user_recommendations(artists: list[str], songs: list[str] = None,
+                         genres: list[str] = None, count: int = 20) -> list[dict[str, str]]:
+    """
+    Get current user recommendations songs based on given artists and songs.
+
+    :param list[str] artists: base artists
+    :param list[str] songs: base songs
+    :param list[str] genres: base genres
+    :param int count: count of songs to return
+    :return list[dict[str, str]]: list of recommended songs
+    """
+    return user().recommendations(seed_artists=artists, seed_genres=genres, seed_tracks=songs, limit=count)['tracks']
