@@ -31,5 +31,9 @@ You can use the playground.ipynb file to run blocks of code and debugging
 ### scripts
 You can use the files with *.py* to run specific api
 
-## In Development
+## Flask app
 adding flask app to view the data
+  - Review your top artist in different terms
+  - Review your top tracks in different terms
+  - Review your saved tracks
+  - Create a new playlist bases on recommendation
