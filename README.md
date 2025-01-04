@@ -31,10 +31,17 @@ You can use the playground.ipynb file to run blocks of code and debugging
 ### scripts
 You can use the files with *.py* to run specific api
 
-## In Development
-adding flask app to view the data
-
-### Usage:
+### using flask
 ```bash
 flask --app web run --debug
+```
+
+
+## In Development
+Improving of the flask app
+
+### Usage:
+Build docker file
+```bash
+docker run -itd -p 5000:5000 spotify-advance:latest
 ```
