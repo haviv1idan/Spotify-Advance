@@ -1,5 +1,5 @@
 pyyaml==6.0.1
-spotipy==2.24.0
+spotipy==2.25.1
 ipython==8.27.0
 ipykernel==6.29.5
 flask==3.0.3
