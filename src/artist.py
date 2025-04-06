@@ -49,11 +49,3 @@ class Artist:
     def __repr__(self) -> str:
         """Return a detailed string representation of the artist."""
         return f"Artist(name='{self.name}', id='{self.id}', popularity={self.popularity})"
-
-    @property
-    def name(self) -> str:
-        return self._name
-
-    @property
-    def id(self) -> str:
-        return self._id

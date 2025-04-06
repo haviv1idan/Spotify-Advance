@@ -1,4 +1,5 @@
 from enum import Enum
+from functools import lru_cache
 from typing import Any, Dict, List
 
 from spotipy import Spotify
@@ -14,9 +15,9 @@ from .track import Track
 
 class TimeRange(Enum):
     """Time ranges for Spotify API queries."""
-    SHORT_TERM = 'short_term'  # Last 4 weeks
+    SHORT_TERM = 'short_term'   # Last 4 weeks
     MEDIUM_TERM = 'medium_term'  # Last 6 months
-    LONG_TERM = 'long_term'  # All time
+    LONG_TERM = 'long_term'     # All time
 
     def __str__(self) -> str:
         return self.value
@@ -73,7 +74,8 @@ class API:
             logger.info("Successfully initialized Spotify API client")
         except Exception as e:
             logger.error(f"Failed to initialize Spotify API: {str(e)}")
-            raise SpotifyAPIError(f"Failed to initialize Spotify API: {str(e)}")
+            raise SpotifyAPIError(
+                f"Failed to initialize Spotify API: {str(e)}")
 
     def _handle_api_error(self, operation: str) -> None:
         """
@@ -89,6 +91,7 @@ class API:
         raise SpotifyAPIError(f"Failed to {operation}")
 
     @property
+    @lru_cache(maxsize=1)
     def current_user(self) -> Dict[str, Any]:
         """
         Get the current user's Spotify profile.
@@ -192,7 +195,8 @@ class API:
         """
         try:
             self.sp.playlist_add_items(playlist_id, track_ids)
-            logger.info(f"Successfully added {len(track_ids)} tracks to playlist {playlist_id}")
+            logger.info(
+                f"Successfully added {len(track_ids)} tracks to playlist {playlist_id}")
             return True
         except SpotifyException as e:
             self._handle_api_error(f"add tracks to playlist: {str(e)}")
@@ -211,7 +215,8 @@ class API:
             SpotifyAPIError: If unable to fetch recently played tracks
         """
         try:
-            response = self.sp.current_user_recently_played(limit=min(limit, 50))
+            response = self.sp.current_user_recently_played(
+                limit=min(limit, 50))
             return [Track.from_spotify_dict(item['track']) for item in response['items']]
         except SpotifyException as e:
             self._handle_api_error(f"fetch recently played tracks: {str(e)}")
@@ -232,15 +237,19 @@ class API:
             SpotifyAPIError: If unable to perform search
         """
         try:
-            response = self.sp.search(q=query, limit=limit, type=','.join(types))
+            response = self.sp.search(
+                q=query, limit=limit, type=','.join(types))
             results = {}
 
             if 'tracks' in response:
-                results['tracks'] = [Track.from_spotify_dict(item) for item in response['tracks']['items']]
+                results['tracks'] = [Track.from_spotify_dict(
+                    item) for item in response['tracks']['items']]
             if 'artists' in response:
-                results['artists'] = [Artist(**item) for item in response['artists']['items']]
+                results['artists'] = [Artist(**item)
+                                      for item in response['artists']['items']]
             if 'albums' in response:
-                results['albums'] = [Album.from_spotify_dict(item) for item in response['albums']['items']]
+                results['albums'] = [Album.from_spotify_dict(
+                    item) for item in response['albums']['items']]
 
             return results
         except SpotifyException as e:
