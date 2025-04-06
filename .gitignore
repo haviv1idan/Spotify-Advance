@@ -11,3 +11,5 @@ __pycache__
 
 # configuration files
 conf.yml
+.venv
+conf.yaml
