@@ -1,5 +1,6 @@
 # venv
 venv
+.venv
 
 # cache file
 .cache
@@ -10,4 +11,4 @@ __pycache__
 *.log*
 
 # configuration files
-conf.yml
+conf.yaml
