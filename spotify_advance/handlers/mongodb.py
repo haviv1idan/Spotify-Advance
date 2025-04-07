@@ -5,7 +5,6 @@ from pymongo import DESCENDING, MongoClient
 from pymongo.collection import Collection
 from pymongo.database import Database
 
-from spotify_advance.datamodels.track import Track
 from spotify_advance.datamodels.track_record import TrackRecord
 
 
@@ -17,13 +16,13 @@ class MongoDBHandler:
         self.recently_played: Collection = self.db.recently_played
         self._logger = getLogger("spotify_advance.mongodb")
 
-    def store_recently_played(self, user_id: str, track: Track, played_at: datetime) -> bool:
+    def store_recently_played(self, user_id: str, track_id: str, played_at: datetime) -> bool:
         """
         Store a recently played track in MongoDB.
 
         Args:
             user_id: Spotify user ID
-            track: Track object containing track information
+            track_id: Spotify track ID
             played_at: Timestamp when the track was played
 
         Returns:
@@ -32,13 +31,13 @@ class MongoDBHandler:
         try:
             track_data = {
                 "user_id": user_id,
-                "track_id": track.id,
+                "track_id": track_id,
                 "played_at": played_at,
             }
 
             self.recently_played.insert_one(track_data)
             self._logger.info(
-                f"Stored recently played track: {track.name} for user: {user_id}")
+                f"Stored recently played track: {track_id} for user: {user_id}")
             return True
         except Exception as e:
             self._logger.error(
@@ -64,3 +63,21 @@ class MongoDBHandler:
             self._logger.error(
                 f"Failed to get recently played tracks: {str(e)}")
             return []
+
+    def delete_user_recently_played(self, user_id: str) -> bool:
+        """
+        Delete all recently played tracks for a user.
+
+        Args:
+            user_id: Spotify user ID
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            self.recently_played.delete_many({"user_id": user_id})
+            return True
+        except Exception as e:
+            self._logger.error(
+                f"Failed to delete recently played tracks: {str(e)}")
+            return False
