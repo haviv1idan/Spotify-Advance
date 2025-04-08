@@ -33,5 +33,26 @@ class SpotifyAPI:
     def current_user(self):
         return self.sp.current_user()
 
-    def get_recently_played(self, limit: int = 20) -> dict:
-        return self.sp.current_user_recently_played(limit=limit)
+    @lru_cache(maxsize=1)
+    def get_recently_played(self, limit: int = 20, before: str = None, after: str = None):
+        recently_played = []
+        tracks = self.sp.current_user_recently_played(
+            limit=limit, after=after, before=before)
+
+        while tracks:
+            for i, item in enumerate(tracks['items']):
+                recently_played.append(item)
+                track = item['track']
+                if i % 10 == 0:
+                    self._logger.debug(
+                        i, track['artists'][0]['name'], ' - ', track['name'], end="\n")
+                else:
+                    self._logger.debug(
+                        i, track['artists'][0]['name'], ' - ', track['name'], end=" ")
+
+            if tracks['next']:
+                tracks = self.sp.next(tracks)
+            else:
+                tracks = None
+
+        return recently_played

@@ -27,3 +27,16 @@ def unix_to_datetime(unix_time: int) -> str:
     """
     dt = datetime.fromtimestamp(unix_time, tz=timezone.utc)
     return dt.strftime("%Y-%m-%dT%H:%M:%S.%fZ")[:-3] + "Z"
+
+
+def get_one_week_before() -> int:
+    """
+    Get the Unix timestamp for one week before the current time.
+
+    Returns:
+        Unix timestamp (integer) representing one week before the current time.
+    """
+    current_time = datetime.now(timezone.utc)
+    # 7 days * 24 hours * 60 minutes * 60 seconds
+    one_week_ago = current_time.timestamp() - (7 * 24 * 60 * 60)
+    return int(one_week_ago)
