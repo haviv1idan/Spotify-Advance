@@ -56,3 +56,26 @@ class SpotifyAPI:
                 tracks = None
 
         return recently_played
+
+    @lru_cache(maxsize=1)
+    def get_saved_tracks(self, limit: int = 20, offset: int = 0, market: str = None):
+        saved_tracks = []
+        tracks = self.sp.current_user_saved_tracks(
+            limit=limit, offset=offset, market=market)
+        while tracks:
+            for i, item in enumerate(tracks['items']):
+                saved_tracks.append(item)
+                track = item['track']
+                if i % 10 == 0:
+                    self._logger.debug(
+                        i, track['artists'][0]['name'], ' - ', track['name'], end="\n")
+                else:
+                    self._logger.debug(
+                        i, track['artists'][0]['name'], ' - ', track['name'], end=" ")
+
+            if tracks['next']:
+                tracks = self.sp.next(tracks)
+            else:
+                tracks = None
+
+        return saved_tracks
