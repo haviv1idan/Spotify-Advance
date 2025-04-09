@@ -77,7 +77,16 @@ async def get_saved_tracks(user_id: str) -> list[SavedTrack]:
 @app.post("/tracks",
           description="store track in mongodb")
 async def store_track(request: dict) -> None:
-    success = handler.store_track(request)
+    print(f"request: {request}")
+    track = request['track']
+    name = track['name']
+    track_id = track['id']
+    popularity = track['popularity']
+    uri = track['uri']
+    album = track['album']
+    artists = track['artists']
+    success = handler.store_track(
+        name, track_id, popularity, uri, album, artists)
     return success
 
 

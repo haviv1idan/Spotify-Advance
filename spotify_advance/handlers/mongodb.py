@@ -6,7 +6,6 @@ from pymongo.collection import Collection
 from pymongo.database import Database
 
 from spotify_advance.datamodels.saved_track import SavedTrack
-from spotify_advance.datamodels.track import Track
 from spotify_advance.datamodels.track_record import TrackRecord
 
 
@@ -20,43 +19,59 @@ class MongoDBHandler:
         self.saved_tracks: Collection = self.db.saved_tracks
         self._logger = getLogger("spotify_advance.mongodb")
 
-    def store_track(self, track: dict) -> bool:
+    def store_track(self, name: str, track_id: str, popularity: int, uri: str, album: dict, artists: list[dict]) -> bool:
         """
         Store a track in MongoDB.
 
         Args:
-            track: Track object
+            name: Track name
+            id: Track ID
+            popularity: Track popularity
+            uri: Track URI
+            album: Track album
+            artists: Track artists
 
         Returns:
             bool: True if successful, False otherwise
         """
+        if self.tracks.find_one({"track_id": track_id}):
+            self._logger.info(
+                f"Track already exists: {track_id}")
+            return False
+
         try:
-            track = Track(**track)
-            self.tracks.insert_one(**track)
+            self.tracks.insert_one({
+                "name": name,
+                "track_id": track_id,
+                "popularity": popularity,
+                "uri": uri,
+                "album": album['name'],
+                "artists": [artist['name'] for artist in artists]
+            })
             return True
         except Exception as e:
             self._logger.error(
                 f"Failed to store track: {str(e)}")
             return False
 
-    def get_track(self, track_id: str) -> Track:
-        """
-        Get a track from MongoDB.
+    # def get_track(self, track_id: str) -> Track:
+    #    """
+    #    Get a track from MongoDB.
 
-        Args:
-            track_id: Spotify track ID
+    #    Args:
+    #        track_id: Spotify track ID
 
-        Returns:
-            Track: Track object
-        """
-        try:
-            return Track(**self.tracks.find_one({"track_id": track_id}))
-        except Exception as e:
-            self._logger.error(
-                f"Failed to get track: {str(e)}")
-            return None
+    #    Returns:
+    #        Track: Track object
+    #    """
+    #    try:
+    #        return Track(**self.tracks.find_one({"track_id": track_id}))
+    #    except Exception as e:
+    #        self._logger.error(
+    #            f"Failed to get track: {str(e)}")
+    #        return None
 
-    def get_all_tracks(self) -> list[Track]:
+    def get_all_tracks(self):
         """
         Get all tracks from MongoDB.
 
@@ -64,7 +79,8 @@ class MongoDBHandler:
             list[Track]: List of all tracks
         """
         try:
-            return [Track(**doc) for doc in self.tracks.find()]
+            cursor = self.tracks.find()
+            return [TrackRecord(**doc).__dict__ for doc in cursor]
         except Exception as e:
             self._logger.error(
                 f"Failed to get all tracks: {str(e)}")
