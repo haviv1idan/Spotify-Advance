@@ -41,15 +41,17 @@ class MongoDBHandler:
                 f"Track already exists: {track_id}")
             return False, "Track already exists"
 
+        track_data = {
+            "name": name,
+            "track_id": track_id,
+            "popularity": popularity,
+            "uri": uri,
+            "album": album['name'],
+            "artists": [artist['name'] for artist in artists]
+        }
+
         try:
-            self.tracks.insert_one({
-                "name": name,
-                "track_id": track_id,
-                "popularity": popularity,
-                "uri": uri,
-                "album": album['name'],
-                "artists": [artist['name'] for artist in artists]
-            })
+            self.tracks.insert_one(track_data)
             return True, "Track stored successfully"
         except Exception as e:
             self._logger.error(
@@ -122,12 +124,17 @@ class MongoDBHandler:
         Returns:
             bool: True if successful, False otherwise
         """
+        track_data = {
+            "user_id": user_id,
+            "track_id": track_id,
+            "played_at": played_at,
+        }
+
         try:
-            track_data = {
-                "user_id": user_id,
-                "track_id": track_id,
-                "played_at": played_at,
-            }
+            if self.recently_played.find_one({"user_id": user_id, "track_id": track_id}):
+                self._logger.info(
+                    f"Recently played track already exists: {track_id} for user: {user_id}")
+                return False, "Recently played track already exists"
 
             self.recently_played.insert_one(track_data)
             self._logger.info(
@@ -190,12 +197,13 @@ class MongoDBHandler:
         Returns:
             bool: True if successful, False otherwise
         """
+        track_data = {
+            "user_id": user_id,
+            "track_id": track_id,
+            "added_at": added_at,
+        }
+
         try:
-            track_data = {
-                "user_id": user_id,
-                "track_id": track_id,
-                "added_at": added_at,
-            }
             if self.saved_tracks.find_one({"user_id": user_id, "track_id": track_id}):
                 self._logger.info(
                     f"Saved track already exists: {track_id} for user: {user_id}")
