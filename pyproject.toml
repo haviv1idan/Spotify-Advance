@@ -1,0 +1,40 @@
+[tool.ruff]
+# Enable the pycodestyle (`E`), Pyflakes (`F`), and import-sorting (`I`) rules
+select = ["E", "F", "I", "B", "N", "UP", "ANN", "C4", "SIM", "RUF"]
+ignore = []
+
+# Python version to target
+target-version = "py39"
+
+# Line length
+line-length = 127
+
+# Allow unused variables when underscored
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Exclude a variety of commonly ignored directories
+exclude = [
+    ".git",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+    "build",
+    "dist",
+]
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings
+quote-style = "double"
+
+# Like Black, indent with spaces, rather than tabs
+indent-style = "space"
+
+# Like Black, respect magic trailing commas
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending
+line-ending = "auto"
+
+[tool.ruff.isort]
+known-third-party = ["spotipy", "pytest", "fastapi", "pydantic"]
