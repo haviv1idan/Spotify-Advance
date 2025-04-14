@@ -6,7 +6,8 @@ from pymongo.collection import Collection
 from pymongo.database import Database
 
 from spotify_advance.datamodels.saved_track import SavedTrack
-from spotify_advance.datamodels.track_record import TrackRecord
+from spotify_advance.datamodels.track_record import (RecentlyPlayedTrackRecord,
+                                                     TrackRecord)
 
 
 class MongoDBHandler:
@@ -145,21 +146,19 @@ class MongoDBHandler:
                 f"Failed to store recently played track: {str(e)}")
             return False, "Failed to store recently played track"
 
-    def get_recently_played(self, user_id: str, limit: int = 10) -> tuple[list[TrackRecord], str]:
+    def get_recently_played(self, user_id: str) -> tuple[list[RecentlyPlayedTrackRecord], str]:
         """
         Get recently played tracks for a user.
 
         Args:
             user_id: Spotify user ID
-            limit: Number of tracks to retrieve
 
         Returns:
-            list[TrackRecord]: List of recently played tracks
+            list[RecentlyPlayedTrackRecord]: List of recently played tracks
         """
         try:
-            cursor = self.recently_played.find({"user_id": user_id}).sort(
-                "played_at", DESCENDING).limit(limit)
-            return [TrackRecord(**doc) for doc in cursor], "Recently played tracks retrieved successfully"
+            cursor = self.recently_played.find({"user_id": user_id})
+            return [RecentlyPlayedTrackRecord(**doc) for doc in cursor], "Recently played tracks retrieved successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to get recently played tracks: {str(e)}")

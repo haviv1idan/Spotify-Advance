@@ -1,10 +1,11 @@
 from datetime import datetime
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from spotify_advance.apis import client_data, mongodb_data
 from spotify_advance.apis.spotify import SpotifyAPI
+from spotify_advance.datamodels.track_record import RecentlyPlayedTrackRecord
 from spotify_advance.handlers.mongodb import MongoDBHandler
 
 
@@ -37,9 +38,9 @@ async def get_me() -> dict:
          name="get_recently_played",
          description="get user recently played tracks from mongodb",
          tags=["recently_played"],
-         response_model=list[TrackRecord])
-async def get_recently_played(user_id: str, limit: int = Query(10, ge=1, le=50)) -> list[TrackRecord]:
-    tracks, message = handler.get_recently_played(user_id, limit)
+         response_model=list[RecentlyPlayedTrackRecord])
+async def get_recently_played(user_id: str) -> list[RecentlyPlayedTrackRecord]:
+    tracks, message = handler.get_recently_played(user_id)
     if not tracks:
         raise HTTPException(
             status_code=500, detail=message)
@@ -50,14 +51,14 @@ async def get_recently_played(user_id: str, limit: int = Query(10, ge=1, le=50))
           name="store_recently_played",
           description="store recently played track in mongodb",
           tags=["recently_played"],
-          response_model=TrackRecord)
-async def store_recently_played(request: TrackRecord) -> TrackRecord:
+          response_model=dict)
+async def store_recently_played(user_id: str, track_id: str, played_at: datetime) -> dict:
     success, message = handler.store_recently_played(
-        request.user_id, request.track_id, request.played_at)
+        user_id, track_id, played_at)
     if not success:
         raise HTTPException(
             status_code=500, detail=message)
-    return request
+    return {"message": message}
 
 
 @app.delete("/recently_played/{user_id}",
