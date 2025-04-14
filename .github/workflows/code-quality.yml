@@ -1,0 +1,55 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 isort
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    - name: Check import order with isort
+      run: isort --check-only --profile black spotify_advance tests
+
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 spotify_advance tests --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings
+        flake8 spotify_advance tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit safety
+
+    - name: Check for security issues with bandit
+      run: bandit -r spotify_advance/ -x tests/ -ll
+
+    - name: Check for vulnerable dependencies with safety
+      run: safety check

@@ -71,6 +71,16 @@ python web.py
 2. Run pre-commit hooks before committing
 3. Use the playground.ipynb for testing new features
 
+## 🔄 CI/CD
+
+This project uses GitHub Actions for continuous integration and delivery:
+
+- **Python Tests**: Runs unit tests on multiple Python versions
+- **Code Quality**: Checks for code style, formatting, and security issues
+- **Docker Build**: Validates the Docker build process
+
+GitHub Actions workflows are defined in the `.github/workflows` directory.
+
 ## 📝 Contributing
 
 1. Fork the repository
