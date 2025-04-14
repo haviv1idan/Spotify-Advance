@@ -7,14 +7,12 @@ Advanced tools and utilities for interacting with Spotify, featuring a web inter
 - Web interface for Spotify interaction
 - Example scripts for common Spotify operations
 - Jupyter notebook playground for experimentation
-- Docker support for easy deployment
 - Pre-commit hooks for code quality
 
 ## 📋 Prerequisites
 
 - Python 3.x
 - Spotify Developer Account and API Credentials
-- Docker (optional)
 
 ## 🛠️ Installation
 
@@ -34,15 +32,6 @@ pip install -r requirements.txt
 pre-commit install
 ```
 
-## 🐳 Docker Setup
-
-Build and run using Docker:
-
-```bash
-docker build -t spotify-advance .
-docker run -p 8000:8000 spotify-advance
-```
-
 ## 📁 Project Structure
 
 ```
@@ -52,7 +41,6 @@ spotify-advance/
 ├── templates/         # Web interface templates
 ├── playground.ipynb   # Jupyter notebook for testing
 ├── web.py            # Web application
-├── Dockerfile        # Docker configuration
 └── requirements.txt  # Python dependencies
 ```
 
@@ -75,9 +63,7 @@ python web.py
 
 This project uses GitHub Actions for continuous integration and delivery:
 
-- **Python Tests**: Runs unit tests on multiple Python versions
 - **Code Quality**: Checks for code style, formatting, and security issues
-- **Docker Build**: Validates the Docker build process
 
 GitHub Actions workflows are defined in the `.github/workflows` directory.
 
