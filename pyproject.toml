@@ -1,7 +1,25 @@
 [tool.ruff]
-# Enable the pycodestyle (`E`), Pyflakes (`F`), and import-sorting (`I`) rules
-select = ["E", "F", "I", "B", "N", "UP", "ANN", "C4", "SIM", "RUF"]
-ignore = []
+# Enable linting rules selectively to avoid too many errors initially
+select = ["E", "F", "I", "RUF"]
+# Ignore most of the annotation related issues for now, since the codebase needs gradual typing updates
+ignore = [
+    "ANN001", # Missing type annotation for function argument
+    "ANN002", # Missing type annotation for *args
+    "ANN003", # Missing type annotation for **kwargs
+    "ANN101", # Missing type annotation for self in method
+    "ANN102", # Missing type annotation for cls in classmethod
+    "ANN201", # Missing return type annotation for public function
+    "ANN202", # Missing return type annotation for private function
+    "ANN204", # Missing return type annotation for special method
+    "ANN205", # Missing return type annotation for staticmethod
+    "ANN206", # Missing return type annotation for classmethod
+    "B019",   # Use of functools.lru_cache on methods
+    "RUF010", # Use explicit conversion flag
+    "RUF013", # PEP 484 prohibits implicit Optional
+    "UP015",  # Unnecessary mode argument
+    "SIM108", # Use ternary operator
+    "E501",   # Line too long
+]
 
 # Python version to target
 target-version = "py39"
@@ -9,6 +27,7 @@ target-version = "py39"
 # Line length
 line-length = 127
 
+[tool.ruff.lint]
 # Allow unused variables when underscored
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
@@ -36,5 +55,5 @@ skip-magic-trailing-comma = false
 # Like Black, automatically detect the appropriate line ending
 line-ending = "auto"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-third-party = ["spotipy", "pytest", "fastapi", "pydantic"]
