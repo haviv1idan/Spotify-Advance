@@ -5,19 +5,25 @@ import pytest
 from spotify_advance.apis.spotify import SpotifyAPI
 
 
+@pytest.fixture
+def mock_client_data():
+    """Mock client_data fixture."""
+    return {
+        "client_id": "mock_client_id",
+        "client_secret": "mock_client_secret",
+        "redirect_uri": "mock_redirect_uri"
+    }
+
+
 class TestSpotifyAPIMock:
     """Unit tests for SpotifyAPI using mocks."""
 
     @pytest.fixture
-    def mock_spotify_api(self):
+    def mock_spotify_api(self, mock_client_data):
         """Create a mocked SpotifyAPI instance."""
         with patch('spotify_advance.apis.spotify.SpotifyOAuth'), \
                 patch('spotify_advance.apis.spotify.Spotify'):
-            api = SpotifyAPI(
-                client_id="mock_client_id",
-                client_secret="mock_client_secret",
-                redirect_uri="mock_redirect_uri"
-            )
+            api = SpotifyAPI(**mock_client_data)
             # Mock the sp client
             api.sp = MagicMock()
             return api

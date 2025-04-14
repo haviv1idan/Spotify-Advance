@@ -16,6 +16,18 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      # Create dummy config files for the Docker build to succeed
+      - name: Create mock config files
+        run: |
+          mkdir -p spotify_advance/apis
+          echo "spotify:
+            client_id: mock_client_id
+            client_secret: mock_client_secret
+            redirect_uri: http://localhost:3000
+
+          mongodb:
+            uri: mongodb://localhost:27017/" > spotify_advance/apis/conf.yaml
+
       - name: Build Docker image
         uses: docker/build-push-action@v4
         with:

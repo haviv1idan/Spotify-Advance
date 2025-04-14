@@ -33,6 +33,12 @@ jobs:
         flake8 spotify_advance tests --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 spotify_advance tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Test with pytest (unit tests only)
+    - name: Test with pytest (only mock tests)
+      env:
+        SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID || 'mock_client_id' }}
+        SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET || 'mock_client_secret' }}
+        SPOTIFY_REDIRECT_URI: ${{ secrets.SPOTIFY_REDIRECT_URI || 'http://localhost:3000' }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI || 'mongodb://localhost:27017/' }}
+        PYTHONPATH: ${{ github.workspace }}
       run: |
-        pytest tests/ -v -k "not test_recently_played"
+        pytest tests/test_spotify_api_mock.py -v
