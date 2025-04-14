@@ -22,10 +22,27 @@ git clone https://github.com/haviv1idan/Spotify-Advance.git
 cd Spotify-Advance
 ```
 
-2. Install dependencies:
+2. Install dependencies (choose one method):
+
+**Using pip:**
 ```bash
 pip install -r requirements.txt
 ```
+
+**Using uv (recommended - faster):**
+```bash
+# Install uv if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create and activate virtual environment
+uv venv
+source .venv/bin/activate  # On Unix/macOS
+
+# Install dependencies
+uv sync
+```
+
+See [UV_GUIDE.md](UV_GUIDE.md) for more details on using uv.
 
 3. Set up pre-commit hooks:
 ```bash
