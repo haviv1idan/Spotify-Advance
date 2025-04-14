@@ -1,15 +1,43 @@
 # venv
 venv
+.venv
 
-# cache file
+# cache files
 .cache
 __pycache__
 */__pycache__
+.pytest_cache/
+.ruff_cache/
 
 # log files
 *.log*
 
 # configuration files
 conf.yml
-.venv
 conf.yaml
+
+# package build files
+*.egg-info/
+*.egg
+dist/
+build/
+*.so
+*.pyc
+.eggs/
+
+# dependency management files
+uv.lock
+pip-wheel-metadata/
+pip-log.txt
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# coverage files
+.coverage
+htmlcov/
+coverage.xml
