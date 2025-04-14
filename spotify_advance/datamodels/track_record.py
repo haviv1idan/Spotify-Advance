@@ -19,7 +19,14 @@ class TrackRecord:
         return f"{self.name} - {self.track_id} - {self.popularity} - {self.uri} - {self.album} - {self.artists}"
 
     def __eq__(self, other):
-        return self.name == other.name and self.track_id == other.track_id and self.popularity == other.popularity and self.uri == other.uri and self.album == other.album and self.artists == other.artists
+        return (
+            self.name == other.name 
+            and self.track_id == other.track_id 
+            and self.popularity == other.popularity 
+            and self.uri == other.uri 
+            and self.album == other.album 
+            and self.artists == other.artists
+        )
 
     def __hash__(self):
         return hash((self.name, self.track_id, self.popularity, self.uri, self.album, self.artists))

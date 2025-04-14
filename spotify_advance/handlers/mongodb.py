@@ -6,8 +6,10 @@ from pymongo.collection import Collection
 from pymongo.database import Database
 
 from spotify_advance.datamodels.saved_track import SavedTrack
-from spotify_advance.datamodels.track_record import (RecentlyPlayedTrackRecord,
-                                                     TrackRecord)
+from spotify_advance.datamodels.track_record import (
+    RecentlyPlayedTrackRecord,
+    TrackRecord,
+)
 
 
 class MongoDBHandler:
@@ -22,7 +24,15 @@ class MongoDBHandler:
 
     ### TRACKS ###
 
-    def store_track(self, name: str, track_id: str, popularity: int, uri: str, album: dict, artists: list[dict]) -> tuple[bool, str]:
+    def store_track(
+        self,
+        name: str,
+        track_id: str,
+        popularity: int,
+        uri: str,
+        album: dict,
+        artists: list[dict]
+    ) -> tuple[bool, str]:
         """
         Store a track in MongoDB.
 

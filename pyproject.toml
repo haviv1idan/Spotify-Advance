@@ -30,8 +30,16 @@ dev = [
 ]
 
 [tool.ruff]
+# Python version to target
+target-version = "py310"
+
+# Line length
+line-length = 127
+
+[tool.ruff.lint]
 # Enable linting rules selectively to avoid too many errors initially
 select = ["E", "F", "I", "RUF"]
+
 # Ignore most of the annotation related issues for now, since the codebase needs gradual typing updates
 ignore = [
     "ANN001", # Missing type annotation for function argument
@@ -52,13 +60,6 @@ ignore = [
     "E501",   # Line too long
 ]
 
-# Python version to target
-target-version = "py310"
-
-# Line length
-line-length = 127
-
-[tool.ruff.lint]
 # Allow unused variables when underscored
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
