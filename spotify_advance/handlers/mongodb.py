@@ -19,7 +19,9 @@ class MongoDBHandler:
         self.saved_tracks: Collection = self.db.saved_tracks
         self._logger = getLogger("spotify_advance.mongodb")
 
-    def store_track(self, name: str, track_id: str, popularity: int, uri: str, album: dict, artists: list[dict]) -> bool:
+    ### TRACKS ###
+
+    def store_track(self, name: str, track_id: str, popularity: int, uri: str, album: dict, artists: list[dict]) -> tuple[bool, str]:
         """
         Store a track in MongoDB.
 
@@ -37,7 +39,7 @@ class MongoDBHandler:
         if self.tracks.find_one({"track_id": track_id}):
             self._logger.info(
                 f"Track already exists: {track_id}")
-            return False
+            return False, "Track already exists"
 
         try:
             self.tracks.insert_one({
@@ -48,30 +50,32 @@ class MongoDBHandler:
                 "album": album['name'],
                 "artists": [artist['name'] for artist in artists]
             })
-            return True
+            return True, "Track stored successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to store track: {str(e)}")
-            return False
+            return False, "Failed to store track"
 
-    # def get_track(self, track_id: str) -> Track:
-    #    """
-    #    Get a track from MongoDB.
+    def get_track(self, track_id: str) -> tuple[dict, str]:
+        """
+        Get a track from MongoDB.
 
-    #    Args:
-    #        track_id: Spotify track ID
+        Args:
+            track_id: Spotify track ID
 
-    #    Returns:
-    #        Track: Track object
-    #    """
-    #    try:
-    #        return Track(**self.tracks.find_one({"track_id": track_id}))
-    #    except Exception as e:
-    #        self._logger.error(
-    #            f"Failed to get track: {str(e)}")
-    #        return None
+        Returns:
+            Track: Track object
+        """
+        try:
+            track = self.tracks.find_one({"track_id": track_id})
+            track['_id'] = str(track['_id'])
+            return track, "Track retrieved successfully"
+        except Exception as e:
+            self._logger.error(
+                f"Failed to get track: {str(e)}")
+            return None, "Failed to get track"
 
-    def get_all_tracks(self):
+    def get_all_tracks(self) -> tuple[list[dict], str]:
         """
         Get all tracks from MongoDB.
 
@@ -84,9 +88,9 @@ class MongoDBHandler:
         except Exception as e:
             self._logger.error(
                 f"Failed to get all tracks: {str(e)}")
-            return []
+            return [], "Failed to get all tracks"
 
-    def delete_track(self, track_id: str) -> bool:
+    def delete_track(self, track_id: str) -> tuple[bool, str]:
         """
         Delete a track from MongoDB.
 
@@ -98,13 +102,15 @@ class MongoDBHandler:
         """
         try:
             self.tracks.delete_one({"id": track_id})
-            return True
+            return True, "Track deleted successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to delete track: {str(e)}")
-            return False
+            return False, "Failed to delete track"
 
-    def store_recently_played(self, user_id: str, track_id: str, played_at: datetime) -> bool:
+    ### RECENTLY PLAYED ###
+
+    def store_recently_played(self, user_id: str, track_id: str, played_at: datetime) -> tuple[bool, str]:
         """
         Store a recently played track in MongoDB.
 
@@ -126,13 +132,13 @@ class MongoDBHandler:
             self.recently_played.insert_one(track_data)
             self._logger.info(
                 f"Stored recently played track: {track_id} for user: {user_id}")
-            return True
+            return True, "Recently played track stored successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to store recently played track: {str(e)}")
-            return False
+            return False, "Failed to store recently played track"
 
-    def get_recently_played(self, user_id: str, limit: int = 10) -> list[TrackRecord]:
+    def get_recently_played(self, user_id: str, limit: int = 10) -> tuple[list[TrackRecord], str]:
         """
         Get recently played tracks for a user.
 
@@ -146,13 +152,13 @@ class MongoDBHandler:
         try:
             cursor = self.recently_played.find({"user_id": user_id}).sort(
                 "played_at", DESCENDING).limit(limit)
-            return [TrackRecord(**doc) for doc in cursor]
+            return [TrackRecord(**doc) for doc in cursor], "Recently played tracks retrieved successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to get recently played tracks: {str(e)}")
-            return []
+            return [], "Failed to get recently played tracks"
 
-    def delete_user_recently_played(self, user_id: str) -> bool:
+    def delete_user_recently_played(self, user_id: str) -> tuple[bool, str]:
         """
         Delete all recently played tracks for a user.
 
@@ -164,13 +170,15 @@ class MongoDBHandler:
         """
         try:
             self.recently_played.delete_many({"user_id": user_id})
-            return True
+            return True, "Recently played tracks deleted successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to delete recently played tracks: {str(e)}")
-            return False
+            return False, "Failed to delete recently played tracks"
 
-    def store_saved_track(self, user_id: str, track_id: str, added_at: datetime) -> bool:
+    ### SAVED TRACKS ###
+
+    def store_saved_track(self, user_id: str, track_id: str, added_at: datetime) -> tuple[bool, str]:
         """
         Store a saved track in MongoDB.
 
@@ -188,16 +196,21 @@ class MongoDBHandler:
                 "track_id": track_id,
                 "added_at": added_at,
             }
+            if self.saved_tracks.find_one({"user_id": user_id, "track_id": track_id}):
+                self._logger.info(
+                    f"Saved track already exists: {track_id} for user: {user_id}")
+                return False, "Saved track already exists"
+
             self.saved_tracks.insert_one(track_data)
             self._logger.info(
                 f"Stored saved track: {track_id} for user: {user_id}")
-            return True
+            return True, "Saved track stored successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to store saved track: {str(e)}")
-            return False
+            return False, "Failed to store saved track"
 
-    def get_saved_tracks(self, user_id: str) -> list[SavedTrack]:
+    def get_saved_tracks(self, user_id: str) -> tuple[list[SavedTrack], str]:
         """
         Get saved tracks for a user.
 
@@ -211,8 +224,28 @@ class MongoDBHandler:
         try:
             cursor = self.saved_tracks.find({"user_id": user_id}).sort(
                 "added_at", DESCENDING)
-            return [SavedTrack(**doc) for doc in cursor]
+            return [SavedTrack(**doc) for doc in cursor], "Saved tracks retrieved successfully"
         except Exception as e:
             self._logger.error(
                 f"Failed to get saved tracks: {str(e)}")
-            return []
+            return [], "Failed to get saved tracks"
+
+    def delete_user_saved_tracks(self, user_id: str, track_id: str) -> tuple[bool, str]:
+        """
+        Delete a saved track for a user.
+
+        Args:
+            user_id: Spotify user ID
+            track_id: Spotify track ID
+
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        try:
+            self.saved_tracks.delete_one(
+                {"user_id": user_id, "track_id": track_id})
+            return True, "Saved track deleted successfully"
+        except Exception as e:
+            self._logger.error(
+                f"Failed to delete saved track: {str(e)}")
+            return False, "Failed to delete saved track"
